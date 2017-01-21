@@ -14,7 +14,7 @@ package nfqueue
 import "C"
 
 import (
-    "log"
+  //  "log"
     "unsafe"
 )
 
