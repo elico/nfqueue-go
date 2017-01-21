@@ -58,7 +58,7 @@ import "C"
 
 import (
     "errors"
-    "log"
+    //"log"
     "unsafe"
 )
 
@@ -95,7 +95,7 @@ type Queue struct {
 // Init creates a netfilter queue which can be used to receive packets
 // from the kernel.
 func (q *Queue) Init() error {
-    log.Println("Opening queue")
+    //log.Println("Opening queue")
     q.c_h = C.nfq_open()
     if (q.c_h == nil) {
         log.Println("nfq_open failed")
@@ -161,10 +161,10 @@ func (q *Queue) CreateQueue(queue_num int) error {
     if (q.cb == nil) {
         return ErrNotInitialized
     }
-    log.Println("Creating queue")
+    log.Println("Creating queue", queue_num)
     q.c_qh = C.nfq_create_queue(q.c_h,C.u_int16_t(queue_num),(*C.nfq_callback)(C.c_nfq_cb),unsafe.Pointer(q))
     if (q.c_qh == nil) {
-        log.Println("nfq_create_queue failed")
+        log.Println("nfq_create_queue failed", queue_num)
         return ErrRuntime
     }
     // Default mode
@@ -249,7 +249,7 @@ func build_payload(c_qh *C.struct_nfq_q_handle, ptr_nfad *unsafe.Pointer) *Paylo
 //
 // Every queued packet _must_ have a verdict specified by userspace.
 func (p *Payload) SetVerdict(verdict int) error {
-    log.Printf("Setting verdict for packet %d: %d\n",p.Id,verdict)
+    //log.Printf("Setting verdict for packet %d: %d\n",p.Id,verdict)
     C.nfq_set_verdict(p.c_qh,C.u_int32_t(p.Id),C.u_int32_t(verdict),0,nil)
     return nil
 }
@@ -258,7 +258,7 @@ func (p *Payload) SetVerdict(verdict int) error {
 //
 // Every queued packet _must_ have a verdict specified by userspace.
 func (p *Payload) SetVerdictMark(verdict int, mark uint32) error {
-    log.Printf("Setting verdict for packet %d: %d mark %lx\n",p.Id,verdict,mark)
+    //log.Printf("Setting verdict for packet %d: %d mark %lx\n",p.Id,verdict,mark)
     C.nfq_set_verdict2(
         p.c_qh,
         C.u_int32_t(p.Id),
@@ -273,7 +273,7 @@ func (p *Payload) SetVerdictMark(verdict int, mark uint32) error {
 //
 // Every queued packet _must_ have a verdict specified by userspace.
 func (p *Payload) SetVerdictModified(verdict int, data []byte) error {
-    log.Printf("Setting verdict for NEW packet %d: %d\n",p.Id,verdict)
+    //log.Printf("Setting verdict for NEW packet %d: %d\n",p.Id,verdict)
     C.nfq_set_verdict(
         p.c_qh,
         C.u_int32_t(p.Id),
